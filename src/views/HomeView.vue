@@ -17,7 +17,7 @@ onMounted(async () => {
 
 const onAsk = async() => {
   if (query.value && collectionName.value) {
-    reply.value = ""
+    reply.value = undefined
     const vector = await text2vec.getEmbedding(query.value)
     documentResults.value = await vectorDB.search(collectionName.value, vector, 3)
 

@@ -1,5 +1,4 @@
 import axiox, { type AxiosInstance } from 'axios';
-import process from 'process';
 
 export interface Message {
     role: string

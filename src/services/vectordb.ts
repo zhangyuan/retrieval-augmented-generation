@@ -1,5 +1,4 @@
 import { QdrantClient } from "@qdrant/js-client-rest";
-import process from "process";
 
 export class Collection {
     name: string;
