@@ -4,7 +4,7 @@ import { vectorDB, Collection, type DistanceType } from '@/services/vectordb'
 
 const collectionName = ref<string>()
 const size = ref<number>(384)
-const distance = ref<DistanceType>("Dot")
+const distanceType = ref<DistanceType>("Cosine")
 
 const collections = ref<Collection[]>([])
 
@@ -17,8 +17,8 @@ onMounted(async () => {
 })
 
 const onSubmit = async () => {
-  if (collectionName.value && size.value && distance.value) {
-    await vectorDB.createCollection(collectionName.value, size.value, distance.value)
+  if (collectionName.value && size.value && distanceType.value) {
+    await vectorDB.createCollection(collectionName.value, size.value, distanceType.value)
     collectionName.value = undefined
   }
 
@@ -48,6 +48,17 @@ const onSubmit = async () => {
                 <div class="select">
                   <select v-model="size">
                     <option value="384">384</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label">Distance Type</label>
+              <div class="control">
+                <div class="select">
+                  <select v-model="distanceType">
+                    <option value="Cosine">Cosine</option>
                   </select>
                 </div>
               </div>

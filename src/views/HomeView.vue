@@ -7,7 +7,7 @@ import { localAI, type Message } from '@/services/localai'
 const collections = ref<Collection[]>([])
 const collectionName = ref<string>()
 const query = ref<string>()
-const documents = ref<DocumentResult[]>([])
+const documentResults = ref<DocumentResult[]>([])
 const reply = ref<Message>()
 const isLoading = ref<boolean>(false)
 
@@ -17,18 +17,18 @@ onMounted(async () => {
 
 const onAsk = async() => {
   if (query.value && collectionName.value) {
+    reply.value = ""
     const vector = await text2vec.getEmbedding(query.value)
-    documents.value = await vectorDB.search(collectionName.value, vector, 3)
+    documentResults.value = await vectorDB.search(collectionName.value, vector, 3)
 
-    if (documents.value.length == 0) {
+    if (documentResults.value.length == 0) {
       return
     }
 
-
     const prompt = `
-    总结以下的上下文，并回答问题。如果你不确定怎么回答，那么回答：“对不起，我无法回答。”
+    根据下面的“上下文”，回答问题：
 
-    上下文： ${documents.value[0].content}
+    上下文： ${documentResults.value[0].content}
     问题： ${query.value}
     回答：
     `
@@ -64,7 +64,7 @@ const onAsk = async() => {
               <div class="control is-expanded">
                 <input type="text" class="input" v-model="query" placeholder="search"></div>
               <div class="control">
-                <button class="button is-info" @click="onAsk">Ask</button>
+                <button class="button is-info" @click="onAsk" :disabled="isLoading">Ask</button>
               </div>
             </div>
           </div>
@@ -73,15 +73,13 @@ const onAsk = async() => {
             <p>Loading...</p>
           </div>
           <div class="block" v-if="reply">
-            <div class="content">
-              {{  reply.content }}
-            </div>
+            <p class="reply">{{  reply.content }}</p>
           </div>
         </div>
 
         <div class="column">
           <div>
-            <div class="block" v-for="document in documents" v-bind:key="document.id">
+            <div class="block" v-for="document in documentResults" v-bind:key="document.id">
               <h2 class="title is-4">Documents retrieved</h2>
               <p class="content">Note that only the first document is used for text generation.</p>
               <div class="box">
@@ -96,3 +94,11 @@ const onAsk = async() => {
     </div>
   </main>
 </template>
+
+<style scoped>
+.reply {
+  margin-top: 1em;
+  white-space: pre-line;
+  word-wrap: break-word;
+}
+</style>

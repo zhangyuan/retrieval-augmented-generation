@@ -19,7 +19,7 @@ class LocalAI {
             temperature: 0.9
         })
         console.log("localai response: ", data)
-        return data.choices[0].message.content as Message
+        return data.choices[0].message as Message
     }
 }
 
