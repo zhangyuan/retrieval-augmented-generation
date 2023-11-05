@@ -18,6 +18,17 @@ export class Document {
     }
 }
 
+export class DocumentResult {
+    id: number | string
+    content: string
+    score?: number
+
+    constructor(id: number | string, content: string) {
+        this.id = id
+        this.content = content
+    }
+}
+
 export type DistanceType = "Cosine" | "Euclid" | "Dot"
 
 export class VectorDB {
@@ -48,9 +59,24 @@ export class VectorDB {
         })
     }
 
-    async getDocuments(collectionName: string, limit: number = 10, offset: number | null) {
+    async getDocuments(collectionName: string, limit: number = 10, offset: number | null = null) {
         const points = await this.apiClient.scroll(collectionName, {offset: offset, limit: limit})
         return points.points.map(point => new Document(point.id, (point.payload! as {content: string}).content))
+    }
+
+    async search(collection_name: string, vector: number[], limit: number) {
+        const points = await this.apiClient.search(
+            collection_name, {
+                vector: vector,
+                limit: limit,
+            }
+        )
+
+        return points.map(point => {
+            const document = new DocumentResult(point.id, (point.payload! as {content: string}).content)
+            document.score = point.score
+            return document
+        })
     }
 }
 

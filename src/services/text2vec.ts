@@ -1,16 +1,17 @@
 import axiox, { type AxiosInstance } from 'axios';
 
 class Text2Vec {
-    apiClient: AxiosInstance
+    private apiClient: AxiosInstance
 
     constructor(client: AxiosInstance) {
         this.apiClient = client
     }
 
     async getEmbedding(input: string) {
-        return await this.apiClient.post("/embeddings", {
+        const { data } = await this.apiClient.post("/embeddings", {
             input: input
         })
+        return data
     }
 }
 

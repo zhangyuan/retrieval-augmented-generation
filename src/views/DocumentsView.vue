@@ -16,14 +16,15 @@ onMounted(async () => {
 })
 
 watch(collectionName, async newValue => {
-  documents.value = await vectorDB.getDocuments(newValue, 10, null)
+  if (newValue) {
+    documents.value = await vectorDB.getDocuments(newValue, 10, null)
+  }
 })
 
 
 const onSubmit = async () => {
   if (documentId.value && collectionName.value && documentContent.value) {
-    const { data } = await text2vec.getEmbedding(documentContent.value)
-    const vector = data
+    const vector = await text2vec.getEmbedding(documentContent.value)
 
     await vectorDB.addDocument(
       collectionName.value, vector, documentId.value, documentContent.value
