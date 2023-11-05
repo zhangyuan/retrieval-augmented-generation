@@ -1,4 +1,5 @@
 import axiox, { type AxiosInstance } from 'axios';
+import process from 'process';
 
 class Text2Vec {
     private apiClient: AxiosInstance
@@ -16,5 +17,5 @@ class Text2Vec {
 }
 
 
-const apiClient = axiox.create({baseURL: "http://localhost:8000"})
+const apiClient = axiox.create({baseURL: import.meta.env.VITE_TEXT2VEC_ENDPOINT})
 export const text2vec = new Text2Vec(apiClient)

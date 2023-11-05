@@ -1,4 +1,5 @@
 import { QdrantClient } from "@qdrant/js-client-rest";
+import process from "process";
 
 export class Collection {
     name: string;
@@ -81,7 +82,7 @@ export class VectorDB {
 }
 
 const defaultVectorDB = () => {
-    const client = new QdrantClient({ host: "localhost", port: 6333 });
+    const client = new QdrantClient({ url: import.meta.env.VITE_QDRAND_ENDPOINT});
     return new VectorDB(client)
 }
 

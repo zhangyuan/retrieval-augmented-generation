@@ -1,4 +1,5 @@
 import axiox, { type AxiosInstance } from 'axios';
+import process from 'process';
 
 export interface Message {
     role: string
@@ -24,5 +25,6 @@ class LocalAI {
 }
 
 
-const apiClient = axiox.create({baseURL: "http://localhost:8080"})
+const apiClient = axiox.create({baseURL: import.meta.env.VITE_LOCALAI_ENDPOINT})
+
 export const localAI = new LocalAI(apiClient)
