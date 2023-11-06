@@ -78,10 +78,10 @@ const onAsk = async() => {
         </div>
 
         <div class="column">
-          <div>
+          <div v-if="documentResults.length">
+            <h2 class="title is-4">Documents retrieved</h2>
+            <p class="content">Note that only the first document is used for text generation.</p>
             <div class="block" v-for="document in documentResults" v-bind:key="document.id">
-              <h2 class="title is-4">Documents retrieved</h2>
-              <p class="content">Note that only the first document is used for text generation.</p>
               <div class="box">
                 <div><b>ID</b> {{ document.id }}</div>
                 <div><b>Score</b> {{ document.score }}</div>
