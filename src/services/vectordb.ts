@@ -46,7 +46,8 @@ export class VectorDB {
     async createCollection(collectionName: string, size: number, distance: DistanceType) {
         return await this.apiClient.createCollection(collectionName, { vectors: {
             size: size,
-            distance: distance
+            distance: distance,
+            on_disk: true
         }})
     }
 
