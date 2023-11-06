@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { vectorDB, Collection, DocumentResult } from '@/services/vectordb'
 import { text2vec } from '@/services/text2vec'
-import { localAI, type Message } from '@/services/localai'
+import { llm, type Message } from '@/services/llm'
 
 const collections = ref<Collection[]>([])
 const collectionName = ref<string>()
@@ -37,7 +37,7 @@ const onAsk = async() => {
 
     isLoading.value = true
     try {
-      reply.value = await localAI.createCompletion(prompt)
+      reply.value = await llm.createCompletion(prompt)
     } finally {
       isLoading.value = false
     }
@@ -102,3 +102,4 @@ const onAsk = async() => {
   word-wrap: break-word;
 }
 </style>
+@/services/llm
