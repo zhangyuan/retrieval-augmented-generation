@@ -2,14 +2,15 @@
 import { ref, onMounted } from 'vue'
 import { vectorDB, Collection, DocumentResult } from '@/services/vectordb'
 import { text2vec } from '@/services/text2vec'
-import { llm, type Message } from '@/services/llm'
+import { llm } from '@/services/llm'
 
 const collections = ref<Collection[]>([])
 const collectionName = ref<string>()
 const query = ref<string>()
 const documentResults = ref<DocumentResult[]>([])
-const reply = ref<Message>()
 const isLoading = ref<boolean>(false)
+const reply = ref<string>()
+const isFinished = ref<boolean>(false)
 
 onMounted(async () => {
   collections.value = await vectorDB.getCollections()
@@ -17,7 +18,8 @@ onMounted(async () => {
 
 const onAsk = async() => {
   if (query.value && collectionName.value) {
-    reply.value = undefined
+    reply.value = ""
+    isFinished.value = false
     const vector = await text2vec.getEmbedding(query.value)
     documentResults.value = await vectorDB.search(collectionName.value, vector, 3)
 
@@ -26,10 +28,22 @@ const onAsk = async() => {
     }
 
     isLoading.value = true
-    try {
-      reply.value = await llm.anwser(documentResults.value[0].content, query.value)
-    } finally {
-      isLoading.value = false
+    const promptContext = documentResults.value[0].content
+    if(typeof fetch === 'undefined') {
+      try {
+        reply.value = (await llm.anwser(promptContext, query.value)).content
+      } finally {
+        isLoading.value = false
+      }
+    } else {
+      llm.anwserAsStream(promptContext, query.value, (message) => {
+        reply.value += message
+        if (reply.value) {
+          isLoading.value = false
+        }
+      }, () => {
+        isFinished.value = true
+      })
     }
   }
 }
@@ -63,7 +77,11 @@ const onAsk = async() => {
             <p>Loading...</p>
           </div>
           <div class="block" v-if="reply">
-            <p class="reply">{{  reply.content }}</p>
+            <p class="reply">{{  reply }}</p>
+          </div>
+
+          <div class="block" v-if="isFinished">
+            [Completed]
           </div>
         </div>
 
