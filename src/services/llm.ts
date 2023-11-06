@@ -21,6 +21,16 @@ class LLM {
         console.log("llm response: ", data)
         return data.choices[0].message as Message
     }
+
+    async anwser(context: string, question: string) {
+        const prompt = `
+            Use the following Context to answer the Question. If you can't answer the question based on the context, just reply "I've no idea.":
+
+            Context:  ${context}
+            Question: ${question}
+            Anwser:`
+        return this.createCompletion(prompt)
+    }
 }
 
 

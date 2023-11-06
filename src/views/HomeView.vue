@@ -25,19 +25,9 @@ const onAsk = async() => {
       return
     }
 
-    const prompt = `
-    根据下面的“上下文”作为事实基础，回答问题；如果无法在下面的“上下文“中生成回答，那么回答”对不起，我无法回答“：
-
-    上下文： ${documentResults.value[0].content}
-    问题： ${query.value}
-    回答：
-    `
-
-    console.log("prompt: ", prompt);
-
     isLoading.value = true
     try {
-      reply.value = await llm.createCompletion(prompt)
+      reply.value = await llm.anwser(documentResults.value[0].content, query.value)
     } finally {
       isLoading.value = false
     }
