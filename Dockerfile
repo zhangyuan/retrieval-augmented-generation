@@ -8,7 +8,7 @@ RUN npm ci
 
 COPY . /app
 
-COPY .env.local /app/.env
+COPY .env .env.local /app/
 
 RUN npm run build
 
