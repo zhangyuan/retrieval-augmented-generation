@@ -11,6 +11,7 @@ const documentResults = ref<DocumentResult[]>([])
 const isLoading = ref<boolean>(false)
 const reply = ref<string>()
 const isFinished = ref<boolean>(false)
+const referenceCount = 2
 
 onMounted(async () => {
   collections.value = await vectorDB.getCollections()
@@ -28,7 +29,7 @@ const onAsk = async() => {
     }
 
     isLoading.value = true
-    const promptContext = documentResults.value[0].content
+    const promptContext = documentResults.value.slice(0, referenceCount).map(d => d.content)
     if(typeof fetch === 'undefined') {
       try {
         reply.value = (await llm.anwser(promptContext, query.value)).content
@@ -88,7 +89,7 @@ const onAsk = async() => {
         <div class="column">
           <div v-if="documentResults.length">
             <h2 class="title is-4">Documents retrieved</h2>
-            <p class="content">Note that only the first document is used for text generation.</p>
+            <p class="content">Note that only the top {{  referenceCount  }} documents are used for text generation.</p>
             <div class="block" v-for="document in documentResults" v-bind:key="document.id">
               <div class="box">
                 <div><b>ID</b> {{ document.id }}</div>

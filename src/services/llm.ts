@@ -21,25 +21,27 @@ class LLM {
         return data.choices[0].message as Message
     }
 
-    async anwser(context: string, question: string) {
-        const prompt = `
-            Use the following Context to answer the Question. If you can't answer the question based on the context, just reply "I've no idea.":
+    buildPrompt(references: string[], question: string) {
+      const context = references.join("\r\n")
 
-            Context:  ${context}
-            Question: ${question}
-            Anwser:`.trim()
-        return this.createCompletion(prompt)
+      const prompt = `
+      Asssume you are a chatbot that anwser user question based on the Reference below. If you can't answer the question based on the context, just reply "I've no idea.":
+
+      Reference:  ${context}
+
+      User question: ${question}
+      Anwser:`.trim()
+
+      return prompt
     }
 
-    async anwserAsStream(context: string, question: string, onMessage: (message: string) => void, onStop: () => void) {
-        const prompt = `
-        Use the following Context to answer the Question. If you can't answer the question based on the context, just reply "I've no idea.":
+    async anwser(references: string[], question: string) {
+      const prompt = this.buildPrompt(references, question)
+      return this.createCompletion(prompt)
+  }
 
-        Context:  ${context}
-        Question: ${question}
-        Anwser:`.trim()
-
-        console.log("prompt:", prompt)
+    async anwserAsStream(references: string[], question: string, onMessage: (message: string) => void, onStop: () => void) {
+        const prompt = this.buildPrompt(references, question)
 
         const payload = {
             model: import.meta.env.VITE_LLM_MODEL,
