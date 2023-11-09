@@ -26,9 +26,9 @@ class LLM {
       const context = references.join("\r\n")
 
       const prompt = `
-      Asssume you are a chatbot that anwser user question based on the Reference below. If you can't answer the question based on the context, just reply "I've no idea.":
+      Asssume you are a chatbot that anwser user question based on the Reference below. If you can't answer the question based on the Reference, just reply "I've no idea.":
 
-      Reference:  ${context}
+      References:  ${context}
 
       User question: ${question}
       Anwser:`.trim()
@@ -87,16 +87,15 @@ class LLM {
             const messages = chunk.trim().split('\n\n')
             for (const message of messages) {
               if (message.trim() == "") {
-                continue
-              }
-              const messageData = message.substring("data: ".length)
-              const messageObject = JSON.parse(messageData)
-
-              onMessage(messageObject.choices[0].delta.content)
-
-              if (messageObject.choices[0].finish_reason == "stop") {
-                onStop()
-                break
+                onMessage(message)
+              } else {
+                const messageData = message.substring("data: ".length)
+                const messageObject = JSON.parse(messageData)
+                onMessage(messageObject.choices[0].delta.content)
+                if (messageObject.choices[0].finish_reason == "stop") {
+                  onStop()
+                  break
+                }
               }
             }
 
