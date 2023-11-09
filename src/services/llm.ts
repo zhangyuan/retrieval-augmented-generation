@@ -65,6 +65,7 @@ class LLM {
             return
           }
 
+          let chunk = ""
           while (true) { // eslint-disable-line no-constant-condition
             const { value, done } = await reader.read()
             if (done) {
@@ -72,9 +73,14 @@ class LLM {
               break
             }
             const decoder = new TextDecoder('utf-8')
-            const chunk = decoder.decode(value)
+            const chunkReceived = decoder.decode(value)
+            console.log(`chunkReceived: [${chunkReceived}], `)
 
-            console.log("chunk: ", chunk)
+            chunk += chunkReceived
+
+            if (!chunkReceived.endsWith("\n")) {
+              continue
+            }
 
             const messages = chunk.trim().split('\n\n')
             for (const message of messages) {
@@ -87,6 +93,8 @@ class LLM {
 
               onMessage(messageObject.choices[0].delta.content)
             }
+
+            chunk = ""
           }
     }
 }
