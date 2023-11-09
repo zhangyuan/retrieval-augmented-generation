@@ -23,7 +23,7 @@ class LLM {
 
     buildPrompt(references: string[], question: string) {
       // set to max chars for now
-      const context = references.join("\r\n").substring(0, 200)
+      const context = references.join("\r\n")
 
       const prompt = `
       Asssume you are a chatbot that anwser user question based on the Reference below. If you can't answer the question based on the context, just reply "I've no idea.":
