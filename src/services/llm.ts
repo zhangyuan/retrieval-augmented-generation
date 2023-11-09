@@ -37,11 +37,13 @@ class LLM {
 
     async anwser(references: string[], question: string) {
       const prompt = this.buildPrompt(references, question)
+      console.log("prompt: ", prompt)
       return this.createCompletion(prompt)
   }
 
     async anwserAsStream(references: string[], question: string, onMessage: (message: string) => void, onStop: () => void) {
         const prompt = this.buildPrompt(references, question)
+        console.log("prompt: ", prompt)
 
         const payload = {
             model: import.meta.env.VITE_LLM_MODEL,
@@ -71,6 +73,8 @@ class LLM {
             }
             const decoder = new TextDecoder('utf-8')
             const chunk = decoder.decode(value)
+
+            console.log("chunk: ", chunk)
 
             const messages = chunk.trim().split('\n\n')
             for (const message of messages) {
