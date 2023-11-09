@@ -23,15 +23,17 @@ class LLM {
 
     buildPrompt(references: string[], question: string) {
       // set to max chars for now
-      const context = references.join("\r\n")
+      const context = references.join("\n").split("\n").join("\n              ").trim()
 
       const prompt = `
-      Asssume you are a chatbot that anwser user question based on the Reference below. If you can't answer the question based on the Reference, just reply "I've no idea.":
+      Assume you are a chatbot that answer Question below based on the Context above. If you can't answer the question based on the Context, just reply "I've no idea.".
 
-      References:  ${context}
 
-      User question: ${question}
-      Anwser:`.trim()
+      Context:  ${context}
+
+
+      Question: ${question}
+      Answer:`.trim()
 
       return prompt
     }

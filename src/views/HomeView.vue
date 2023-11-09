@@ -11,7 +11,7 @@ const documentResults = ref<DocumentResult[]>([])
 const isLoading = ref<boolean>(false)
 const reply = ref<string>()
 const isFinished = ref<boolean>(false)
-const referenceCount = 2
+let referenceCount = 1
 
 onMounted(async () => {
   collections.value = await vectorDB.getCollections()
@@ -90,7 +90,7 @@ const onAsk = async() => {
         <div class="column">
           <div v-if="documentResults.length">
             <h2 class="title is-4">Documents retrieved</h2>
-            <p class="content">Note that only the top {{  referenceCount  }} documents are used for text generation.</p>
+            <p class="content">Note that only {{  referenceCount  }} {{ referenceCount == 1 ? "this first document is " : `the top ${referenceCount} are` }} used for text generation.</p>
             <div class="block" v-for="document in documentResults" v-bind:key="document.id">
               <div class="box">
                 <div><b>ID</b> {{ document.id }}</div>
