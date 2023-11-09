@@ -22,7 +22,8 @@ class LLM {
     }
 
     buildPrompt(references: string[], question: string) {
-      const context = references.join("\r\n")
+      // set to max chars for now
+      const context = references.join("\r\n").substring(0, 200)
 
       const prompt = `
       Asssume you are a chatbot that anwser user question based on the Reference below. If you can't answer the question based on the context, just reply "I've no idea.":
@@ -74,24 +75,27 @@ class LLM {
             }
             const decoder = new TextDecoder('utf-8')
             const chunkReceived = decoder.decode(value)
-            console.log(`chunkReceived: [${chunkReceived}], `)
 
             chunk += chunkReceived
 
-            if (!chunkReceived.endsWith("\n")) {
+            if (!chunkReceived.endsWith("\n\n")) {
               continue
             }
 
             const messages = chunk.trim().split('\n\n')
             for (const message of messages) {
+              if (message.trim() == "") {
+                continue
+              }
               const messageData = message.substring("data: ".length)
               const messageObject = JSON.parse(messageData)
 
+              onMessage(messageObject.choices[0].delta.content)
+
               if (messageObject.choices[0].finish_reason == "stop") {
+                onStop()
                 break
               }
-
-              onMessage(messageObject.choices[0].delta.content)
             }
 
             chunk = ""

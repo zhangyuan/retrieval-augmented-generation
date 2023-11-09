@@ -43,6 +43,7 @@ const onAsk = async() => {
           isLoading.value = false
         }
       }, () => {
+        isLoading.value = false
         isFinished.value = true
       })
     }
