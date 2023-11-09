@@ -76,6 +76,8 @@ class LLM {
             const decoder = new TextDecoder('utf-8')
             const chunkReceived = decoder.decode(value)
 
+            console.log(`chunkReceived: [${chunkReceived}]`)
+
             chunk += chunkReceived
 
             if (!chunkReceived.endsWith("\n\n")) {
